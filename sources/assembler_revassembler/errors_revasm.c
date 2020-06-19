@@ -6,7 +6,7 @@
 /*   By: ssfar <ssfar@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/04 17:49:43 by user42            #+#    #+#             */
-/*   Updated: 2020/06/11 18:32:23 by ssfar            ###   ########.fr       */
+/*   Updated: 2020/06/18 16:22:48 by ssfar            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 static int	check_filename(char *file)
 {
 	if (!file)
+		return (0);
+	if (ft_strlen(file) < 4)
 		return (0);
 	if (ft_strncmp(&file[ft_strlen(file) - 4], ".cor", 4) != 0)
 		return (0);
@@ -35,6 +37,13 @@ void		*error_read(t_header *header, char *s)
 	write(2, "Can't read source file\n", 23);
 	if (header)
 		free(header);
+	if (s)
+		ft_strdel(&s);
+	return (NULL);
+}
+
+void		*error_del(char *s)
+{
 	if (s)
 		ft_strdel(&s);
 	return (NULL);

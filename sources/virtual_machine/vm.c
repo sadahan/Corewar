@@ -6,7 +6,7 @@
 /*   By: ssfar <ssfar@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/04/29 13:46:51 by ssfar             #+#    #+#             */
-/*   Updated: 2020/04/29 13:46:51 by ssfar            ###   ########.fr       */
+/*   Updated: 2020/06/18 16:13:43 by ssfar            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	game_loop(t_vm *vm)
 {
-	int ch;
+	int	ch;
 
 	if (vm->visualiser == true)
 		ch = getch();
@@ -26,16 +26,18 @@ void	game_loop(t_vm *vm)
 			display_round(vm);
 		}
 		if (vm->dump && vm->cycle_counter == vm->cycle_to_dump)
+		{
+			if (vm->visualiser == true)
+				endwin();
 			dump(vm);
+		}
 		if (vm->cycle_counter == vm->cycle_to_die)
 			check(vm, vm->cursor, NULL);
 		if (vm->cursor == NULL || vm->cycle_to_die == 0)
-			break;
+			break ;
 		update_cursor(vm, vm->cursor);
 		vm->cycle_counter++;
 	}
-	if (vm->visualiser == true)
-		endwin();
 }
 
 void	check(t_vm *vm, t_cursor *cur, t_cursor *prev)
@@ -97,7 +99,7 @@ void	update_cursor(t_vm *vm, t_cursor *tmp)
 		if (tmp->wait_cylces == 0)
 		{
 			if (tmp->opcode == 0)
-				tmp->pc	= (tmp->pc + 1) % MEM_SIZE;
+				tmp->pc = (tmp->pc + 1) % MEM_SIZE;
 			else
 			{
 				vm->tab[tmp->opcode](vm, tmp);

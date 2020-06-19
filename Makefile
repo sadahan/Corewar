@@ -6,7 +6,7 @@
 #    By: ssfar <ssfar@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/08 12:15:55 by ssfar             #+#    #+#              #
-#    Updated: 2020/06/11 18:51:42 by ssfar            ###   ########.fr        #
+#    Updated: 2020/06/18 02:47:13 by ssfar            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,8 +16,8 @@ NAME = corewar
 NAME1 = asm
 NAME2 = revasm
 
-CC = gcc
-CFLAGS = -Wall -Wextra -Werror -I $(INC_DIR) -I ./libft/includes
+CC = clang
+CFLAGS = -Wall -Wextra -Werror -I $(INC_DIR) -I ./libft/includes #-ofast
 
 INC_DIR = includes
 SRC_DIR = sources/virtual_machine
@@ -31,6 +31,7 @@ SRC_NAME =	add_sub_fun.c \
 			fork_fun.c \
 			get_value.c \
 			ld_fun.c \
+			lget_value.c \
 			live_jmp_aff_fun.c \
 			load.c \
 			main.c \
@@ -41,6 +42,9 @@ SRC_NAME =	add_sub_fun.c \
 			utils.c \
 			vm.c \
 			visu_main.c \
+			visu_aff.c \
+			visu_init.c \
+			visu_color.c \
 
 SRC_NAME1 =	dynamic_string.c\
 			errors_asm.c\
@@ -99,7 +103,7 @@ $(NAME2): $(OBJ2)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@)
-	@$(CC) $(CFLAGS) -lncurses -c $< -o $@
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 $(OBJ_DIR)/%.o: $(SRC_DIR1)/%.c
 	@mkdir -p $(dir $@)

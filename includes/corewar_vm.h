@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ssfar <ssfar@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/04/17 14:35:25 by ssfar             #+#    #+#             */
-/*   Updated: 2020/04/17 14:35:25 by ssfar            ###   ########.fr       */
+/*   Created: 2020/06/18 00:54:08 by ssfar             #+#    #+#             */
+/*   Updated: 2020/06/18 17:07:34 by ssfar            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@
 # define LIGHT_RED 9
 # define LIGHT_CYAN 14
 
-typedef struct		s_cursor
+typedef struct	s_cursor
 {
 	t_bool				carry;
 	t_bool				live;
@@ -44,38 +44,38 @@ typedef struct		s_cursor
 	unsigned int		reg[REG_NUMBER];
 	int					player_id;
 	struct s_cursor		*next;
-}					t_cursor;
+}				t_cursor;
 
 /*
 **	info of a processus
 */
 
-typedef struct		s_player
+typedef struct	s_player
 {
-	char			*file;
-	unsigned char	prog_name[PROG_NAME_LENGTH + 1];
-	unsigned int	prog_size;
-	unsigned char	comment[COMMENT_LENGTH + 1];
-}					t_player;
+	char				*file;
+	unsigned char		prog_name[PROG_NAME_LENGTH + 1];
+	unsigned int		prog_size;
+	unsigned char		comment[COMMENT_LENGTH + 1];
+}				t_player;
 
 /*
 ** info from .cor file
 */
 
-typedef struct s_window
+typedef struct	s_window
 {
-	WINDOW *memory;
-	WINDOW *info1;
-	WINDOW *info2;
-	WINDOW *champions;
-	WINDOW *input;
+	WINDOW				*memory;
+	WINDOW				*info1;
+	WINDOW				*info2;
+	WINDOW				*champions;
+	WINDOW				*input;
 }				t_window;
 
 /*
 ** windows
 */
 
-typedef struct		s_vm
+typedef struct	s_vm
 {
 	t_player			*player;
 	t_cursor			*cursor;
@@ -95,13 +95,11 @@ typedef struct		s_vm
 	void				(*tab[17])(struct s_vm *vm, t_cursor *cur);
 	unsigned int		cost[17];
 	t_window			*window;
-}					t_vm;
-
-/*
-**
-*/
+}				t_vm;
 
 void			create_new_cursor(t_vm *vm, t_cursor *parent);
+void			free_cursor_list(t_vm *vm);
+void			free_all(t_vm *vm);
 void			read_player_file(t_vm *vm);
 void			check_file(t_vm *vm, int fd, int i);
 void			check_for_null_bytes(t_vm *vm, int fd, unsigned int i);
@@ -109,7 +107,7 @@ void			u_big_endian_to_u(unsigned int *big_endian);
 void			corewar_vm(int ac, char **av);
 void			init(int ac, char **av, t_vm *vm);
 void			complete_player_id(int ac, char **av, t_vm *vm);
-void			exit_failure(char *error_message, char *file,
+void			exit_failure(t_vm *vm, char *error_message, char *file,
 					t_bool call_perror);
 void			dump(t_vm *vm);
 void			print_player(t_vm *vm);
@@ -137,17 +135,17 @@ void			ft_or(t_vm *vm, t_cursor *cur);
 void			ft_xor(t_vm *vm, t_cursor *cur);
 void			ft_fork(t_vm *vm, t_cursor *cur);
 void			ft_lfork(t_vm *vm, t_cursor *cur);
-unsigned int	get_mem(t_vm *vm, unsigned long long pos, int size);
+unsigned int	get_mem(t_vm *vm, unsigned long long pc, long long pos,
+					int size);
 void			ft_ld(t_vm *vm, t_cursor *cur);
 void			ft_lld(t_vm *vm, t_cursor *cur);
 void			ft_ldi(t_vm *vm, t_cursor *cur);
 void			ft_lldi(t_vm *vm, t_cursor *cur);
 void			ft_zjmp(t_vm *vm, t_cursor *cur);
 void			ft_aff(t_vm *vm, t_cursor *cur);
-void			write_int(t_vm *vm, unsigned int value, unsigned long long pos);
-void			write_h(t_vm *vm, unsigned short value, unsigned long long pos);
-unsigned int	read_h(t_vm *vm, unsigned long long pos);
-unsigned int	read_int(t_vm *vm, unsigned long long pos);
+void			write_int(t_vm *vm, unsigned int value, unsigned long long pc,
+					long long pos);
+unsigned int	read_int(t_vm *vm, unsigned long long pc, long long pos);
 void			ft_st(t_vm *vm, t_cursor *cur);
 void			ft_sti(t_vm *vm, t_cursor *cur);
 t_bool			is_reg(unsigned char reg);
@@ -160,8 +158,11 @@ unsigned int	get_reg(t_vm *vm, t_cursor *cur, unsigned long long pos);
 void			cpy_to_reg(unsigned int *reg, unsigned int value);
 t_bool			check_3reg(t_vm *vm, t_cursor *cur, unsigned char *arg,
 					t_bool big_dir);
+unsigned int	lget_mem(t_vm *vm, unsigned long long pc,
+					long long pos, int size);
+unsigned int	lread_int(t_vm *vm, unsigned long long pc, long long pos);
 
-t_window		*init_window(void);
+t_window		*init_window(t_vm *vm, t_window *window);
 int				init_visu(t_vm *vm);
 void			display_round(t_vm *vm);
 void			refresh_window(t_vm *vm);
@@ -171,5 +172,8 @@ void			aff_champions(t_vm *vm);
 void			display_round(t_vm *vm);
 void			color_arena(t_vm *vm, t_cursor *cursor, unsigned long long pos);
 int				get_visu_input(t_vm *vm, int ch);
-
+void			reset_light(t_vm *vm);
+void			pair_colors(t_vm *vm);
+void			color_player(t_vm *vm, size_t act_player,
+					size_t size, size_t nb_player);
 #endif

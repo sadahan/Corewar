@@ -6,7 +6,7 @@
 /*   By: ssfar <ssfar@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/06 14:58:01 by cbretagn          #+#    #+#             */
-/*   Updated: 2020/06/09 15:25:03 by ssfar            ###   ########.fr       */
+/*   Updated: 2020/06/18 02:02:01 by ssfar            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	ft_st(t_vm *vm, t_cursor *cur)
 {
-	unsigned char		arg[4];
+	unsigned char		arg[3];
 	unsigned int		value;
 	unsigned long long	pos;
 
@@ -28,9 +28,9 @@ void	ft_st(t_vm *vm, t_cursor *cur)
 			cur->reg[vm->arena[(cur->pc + 3) % MEM_SIZE] - 1] = value;
 		else
 		{
-			pos = ((short)get_mem(vm, cur->pc + 3, 2)) % IDX_MOD + cur->pc;
-			write_int(vm, value, pos);
-			vm->visualiser == true ? color_arena(vm, cur, pos) : 0;
+			pos = ((short)get_mem(vm, cur->pc, 3, 2)) % IDX_MOD;
+			write_int(vm, value, cur->pc, pos);
+			vm->visualiser == true ? color_arena(vm, cur, cur->pc + pos) : 0;
 		}
 	}
 	cur->pc = (cur->pc + 2 + jump(arg, true)) % MEM_SIZE;
@@ -38,7 +38,7 @@ void	ft_st(t_vm *vm, t_cursor *cur)
 
 void	ft_sti(t_vm *vm, t_cursor *cur)
 {
-	unsigned char		arg[4];
+	unsigned char		arg[3];
 	unsigned int		value;
 	int					pos[2];
 	unsigned long long	result;
@@ -51,16 +51,16 @@ void	ft_sti(t_vm *vm, t_cursor *cur)
 		if (arg[1] == REG_CODE)
 			pos[0] = get_reg(vm, cur, cur->pc + 3);
 		else
-			pos[0] = (short)get_mem(vm, cur->pc + 3, 2);
+			pos[0] = (short)get_mem(vm, cur->pc, 3, 2);
 		if (arg[1] == IND_CODE)
-			pos[0] = get_mem(vm, cur->pc + pos[0], 4);
+			pos[0] = get_mem(vm, cur->pc, pos[0], 4);
 		if (arg[2] == REG_CODE)
 			pos[1] = get_reg(vm, cur, cur->pc + 3 + arg_size(arg[1], 0));
 		else
-			pos[1] = (short)get_mem(vm, cur->pc + 3 + arg_size(arg[1], 0), 2);
-		result = cur->pc + (pos[0] + pos[1]) % IDX_MOD;
-		write_int(vm, value, result);
-		vm->visualiser == true ? color_arena(vm, cur, result) : 0;
+			pos[1] = (short)get_mem(vm, cur->pc, 3 + arg_size(arg[1], 0), 2);
+		result = (pos[0] + pos[1]) % IDX_MOD;
+		write_int(vm, value, cur->pc, result);
+		vm->visualiser == true ? color_arena(vm, cur, cur->pc + result) : 0;
 	}
 	cur->pc = (cur->pc + 2 + jump(arg, false)) % MEM_SIZE;
 }
